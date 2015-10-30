@@ -254,6 +254,13 @@ else
   log "HA support for ceilometer is disabled"
 end
 
+if is_rgw_enabled
+  log "RadosGW object store is enabled"
+  include_recipe "ceilometer::rgw.rb"
+else:
+  log "RadosGW object store is disabled"
+end
+
 crowbar_pacemaker_sync_mark "wait-ceilometer_register"
 
 keystone_register "ceilometer wakeup keystone" do

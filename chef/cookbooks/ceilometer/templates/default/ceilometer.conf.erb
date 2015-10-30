@@ -1183,6 +1183,18 @@ metering_secret=<%= @metering_secret %>
 #metering_topic=metering
 
 
+[rgw_admin_credentials]
+
+# 
+# Options defined for ceilometer.objectstore.rgw
+#
+# Access key for Radosgw Admin.
+#access_key = None
+
+# Secret key for Radosgw Admin.
+#secret_key = None
+
+
 [service_credentials]
 
 #
@@ -1257,6 +1269,12 @@ insecure= <%= @keystone_settings['insecure'] %>
 # Glance service type. (string value)
 #glance=image
 
+#
+# Options defined in ceilometer.objectstore.rgw
+#
+
+# Rados Gateway Service Type (string value)
+#radosgw=object-store
 
 #
 # Options defined in ceilometer.objectstore.swift

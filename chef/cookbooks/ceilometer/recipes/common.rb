@@ -49,6 +49,7 @@ end
 
 is_compute_agent = node.roles.include?("ceilometer-agent") && node.roles.any?{|role| /^nova-multi-compute-/ =~ role}
 is_swift_proxy = node.roles.include?("ceilometer-swift-proxy-middleware") && node.roles.include?("swift-proxy")
+is_ceph_radosgw = node[:ceilometer][:radosgw_backend] && node.roles.include?("ceilometer-cagent") && node.roles.include?("ceph-radosgw")
 
 # Find hypervisor inspector
 hypervisor_inspector = nil
@@ -77,6 +78,10 @@ if time_to_live > 0
   time_to_live = time_to_live * 3600 * 24
 end
 
+if is_ceph_radosgw
+  rgw_keys = get_radosgw_keys
+end
+
 template "/etc/ceilometer/ceilometer.conf" do
     source "ceilometer.conf.erb"
     owner "root"
@@ -96,6 +101,8 @@ template "/etc/ceilometer/ceilometer.conf" do
       :libvirt_type => libvirt_type,
       :time_to_live => time_to_live,
       :alarm_threshold_evaluation_interval => node[:ceilometer][:alarm_threshold_evaluation_interval]
+      :access_key => rgw_keys['access_key']
+      :secret_key => rgw_keys['secret_key']
     )
     if is_compute_agent
       notifies :restart, "service[nova-compute]"
